@@ -1,14 +1,14 @@
-# fullstackopen2022 - Exercises
+# fullstackopen2022 
 Deep diving into modern web application development
 
-## Completed Exercises here includes:
+## Completed Exercises:
 
-### Part 0 (Fundamentals of Web apps)
+### Part 0 - Fundamentals of Web apps
   - Create sequence diagrams using websequencediagrams service depicting client and server communications
   - Create sequence diagrams depicting the situation where the user creates new item in a page
   - Create a sequence diagram depicting when the user goes from one page to another
 
-### Part 1 (Introduction to React)
+### Part 1 - Introduction to React
   * Course Information 
     * Display an array of courses and sum each exercises...
 
@@ -18,7 +18,7 @@ Deep diving into modern web application development
   * Anecdotes 
     * Vote for a displayed anecdote and one with the highest vote, display random anecdote on click of a button, ...
 
-### Part 2 (Communicating with server)
+### Part 2 - Communicating with server
   * Advanced course information 
     * Separate components, display a deeply nested array of courses, ...
 
@@ -26,4 +26,4 @@ Deep diving into modern web application development
     * Add user name, Add user name, display and filter username and numbers, conditional rendering and alerts, ...
 
   * Countries Data 
-    * Fetch and display countries from an API, filter countries, conditionally render countries data, use weather API to determine the current weather of a countries city, ... 
+    * Fetch and display countries from an [https://restcountries.com/v3.1/all](API), filter countries, conditionally render countries data, use weather [ https://openweathermap.org](API) to determine the current weather of a countries city, ... 
