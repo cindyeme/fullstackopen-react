@@ -26,4 +26,22 @@ Deep diving into modern web application development
     * Add user name, Add user name, display and filter username and numbers, conditional rendering and alerts, ...
 
   * Countries Data 
-    * Fetch and display countries from an [https://restcountries.com/v3.1/all](API), filter countries, conditionally render countries data, use weather [ https://openweathermap.org](API) to determine the current weather of a countries city, ... 
+    * Fetch and display countries from an [API](https://restcountries.com/v3.1/all), filter countries, conditionally render countries data, use weather [API](https://openweathermap.org) to determine the current weather of a countries city, ... 
+
+## Getting Started.
+
+Make sure you have nodejs installed by running the following command on your terminal:
+
+```bash
+node -v
+```
+
+If the output is not the version of your nodejs installation, install nodejs from [here](https://nodejs.org/en/download/)
+
+Run `npm install` inside the project's directory to install all the project's dependencies:
+
+
+## Starting the Development Server
+```bash
+npm start
+```
