@@ -38,10 +38,14 @@ node -v
 
 If the output is not the version of your nodejs installation, install nodejs from [here](https://nodejs.org/en/download/)
 
-Run `npm install` inside the project's directory to install all the project's dependencies:
+To install all the project's dependencies inside a project directory: Run
 
+```bash
+npm install
+```
 
-## Starting the Development Server
+To start the development server: Run
+
 ```bash
 npm start
 ```
