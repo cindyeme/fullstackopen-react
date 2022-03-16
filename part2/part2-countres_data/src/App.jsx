@@ -4,14 +4,9 @@ import ShowButton from "./components/showButton";
 import CountryDetails from "./components/countryDetails";
 import Weather from "./components/Weather";
 
-const api_key = process.env.REACT_APP_API_KEY;
-// variable api_key has now the value set in startup
-
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
-  const [city, setCity] = useState("Helsinki");
-  const [weather, setWeather] = useState({});
 
   // handle filter input change
   const handleChange = (e) => {

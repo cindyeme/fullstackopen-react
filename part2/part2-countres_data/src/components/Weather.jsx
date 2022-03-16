@@ -5,8 +5,8 @@ const api_key = process.env.REACT_APP_API_KEY;
 
 const Weather = (props) => {
   const [weather, setWeather] = useState([]);
-  console.log(weather);
-  console.log(weather.weather);
+  // console.log(weather);
+  // console.log(weather.weather);
   const { city, country } = props;
 
   // API response from openweathermap
@@ -23,7 +23,6 @@ const Weather = (props) => {
     <div>
       <h2>Weather in {country?.capital} </h2>
       <p>Temperature: {weather?.main?.temp}</p>
-      
       <p>Humidity: {`${weather?.main?.humidity}%`}</p>
       {weather.weather !== undefined ? (
         <>
