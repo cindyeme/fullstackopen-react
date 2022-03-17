@@ -1,8 +1,6 @@
 import React from 'react';
 
 const PersonForm = ({ handleSubmit, handleChange, addPerson }) => {
-  console.log(addPerson.id);
-  
   return (
     <form onSubmit={handleSubmit}>
       <div>

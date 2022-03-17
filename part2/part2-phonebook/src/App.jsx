@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/Form";
-import Persons from "./components/Persons";
+import phoneService from "./services/Persons";
+import Person from "./components/Persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [addPerson, setAddPerson] = useState({ name: "", number: "", id: "" });
   const [search, setSearch] = useState("");
+  const [message, setMessage] = useState({ msg: "", status: "" });
+
   const copyPersons = [...persons];
   // Handle input change
   const handleChange = (e) => {
@@ -22,42 +25,118 @@ const App = () => {
   };
 
   // filtering persons
-  const filterPerson = copyPersons.filter((person) =>
-    person.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filterPerson =
+    search === ""
+      ? persons
+      : copyPersons.filter((person) =>
+          person.name.toLowerCase().includes(search.toLowerCase())
+        );
 
   // Handles form submit
   const handleSubmit = (e) => {
     e.preventDefault();
+    // filter  existing name
+    const checkPerson = persons.find(
+      (person) => person.name === addPerson.name
+    );
+    const updatedPerson = { ...checkPerson, number: addPerson.number };
+
     const newPerson = {
       name: addPerson.name,
       number: addPerson.number,
-      id: Math.random().toString(36).slice(2),
+      id: persons.length + 1,
     };
 
-    copyPersons.forEach((person) => {
-      if (person.name !== addPerson.name) {
-        setPersons(persons.concat(newPerson));
-      } else {
-        alert(`'${addPerson.name}' is already added to phonebook`);
-        setPersons(persons);
+    if (checkPerson) {
+      const confirm = window.confirm(
+        `${checkPerson.name} is already added to phonebook, replace the old number with a new one?`
+      );
+      if (confirm) {
+        phoneService
+          .update(checkPerson.id, updatedPerson)
+          .then((result) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== checkPerson.id ? person : result
+              )
+            );
+            setAddPerson({ name: "", number: "", id: "" });
+            setMessage({
+              msg: `Changed "${result.name}'s" number to "${result.number}"`,
+              status: "ok",
+            });
+            setTimeout(() => {
+              setMessage({ msg: "", status: "" });
+            }, 5000);
+          })
+          .catch((err) => {
+            setMessage({
+              ...message,
+              msg: `Information of "${checkPerson.name}" has already been removed from server`,
+            });
+            setPersons(persons.filter((p) => p.id !== checkPerson.id));
+            console.log("Error in update person >>>>", err);
+          });
       }
-    });
-    setAddPerson({ name: "", number: "", id: "" });
+    } else {
+      phoneService
+        .create(newPerson)
+        .then((result) => {
+          setPersons(persons.concat(result));
+          setAddPerson({ name: "", number: "", id: "" });
+          setMessage({ msg: `Added "${result.name}"`, status: "ok" });
+          setTimeout(() => {
+            setMessage({ msg: "", status: "" });
+          }, 5000);
+          // console.log(result);
+        })
+        .catch((err) => console.log("Error in create >>>", err));
+    }
   };
 
   // Fetching initial state from json-server
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      const persons = response.data;
-      console.log(persons);
-      setPersons(persons);
+    phoneService.getAll().then((result) => {
+      setPersons(result);
     });
   }, []);
+
+  // remove a person from the server
+  const handleDelete = (id) => {
+    const person = persons.find((p) => p.id === id);
+    const confirm = window.confirm(`Are you you want to delete ${person.name}`);
+
+    if (confirm) {
+      phoneService
+        ._delete(id)
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== id));
+          setMessage({
+            msg: `"${person.name}" successfully deleted!`,
+            status: "ok",
+          });
+          setTimeout(() => {
+            setMessage({ msg: "", status: "" });
+          }, 5000);
+        })
+        .catch((err) => {
+          setMessage({
+            msg: `"${person.name}" was previously deleted from the server!`,
+            status: "",
+          });
+          setPersons(persons.filter((p) => p.id !== id));
+          setTimeout(() => {
+            setMessage({ msg: "", status: "" });
+          }, 5000);
+          console.log("Error in delete >>>>", err);
+        });
+    }
+  };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message.msg} status={message.status} />
       <Filter search={search} handleChange={handleFilterChange} />
       <h2>Add a New</h2>
       <PersonForm
@@ -66,7 +145,22 @@ const App = () => {
         addPerson={addPerson}
       />
       <h2>Numbers</h2>
-      <Persons filterPerson={filterPerson} />
+      <div>
+        {filterPerson.length > 0 ? (
+          <>
+            {filterPerson.map((person) => (
+              <Person
+                key={person.id}
+                name={person.name}
+                number={person.number}
+                onDelete={() => handleDelete(person.id)}
+              />
+            ))}
+          </>
+        ) : (
+          <p>No matches!</p>
+        )}
+      </div>
     </div>
   );
 };
