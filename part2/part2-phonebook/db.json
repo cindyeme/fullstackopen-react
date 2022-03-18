@@ -1,9 +1,14 @@
 {
   "persons": [
     {
-      "name": "Kings College",
+      "name": "Cynthia",
+      "number": "09032911321",
+      "id": 3
+    },
+    {
+      "name": "Cynthia Ngozi",
       "number": "08135570186",
-      "id": 2
+      "id": 4
     }
   ]
 }

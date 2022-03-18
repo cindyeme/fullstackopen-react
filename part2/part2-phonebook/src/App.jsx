@@ -7,11 +7,12 @@ import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [addPerson, setAddPerson] = useState({ name: "", number: "", id: "" });
+  const [addPerson, setAddPerson] = useState({ name: "", number: "" });
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState({ msg: "", status: "" });
 
   const copyPersons = [...persons];
+  
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,9 +25,17 @@ const App = () => {
     setSearch(value);
   };
 
+  // notify
+  const notify = (msg, status) => {
+    setMessage({ msg, status });
+    setTimeout(() => {
+      setMessage({ msg: "", status: "" });
+    }, 5000);
+  };
+
   // filtering persons
   const filterPerson =
-    search === ""
+    search.length === 0
       ? persons
       : copyPersons.filter((person) =>
           person.name.toLowerCase().includes(search.toLowerCase())
@@ -44,7 +53,7 @@ const App = () => {
     const newPerson = {
       name: addPerson.name,
       number: addPerson.number,
-      id: persons.length + 1,
+      // id: persons.length + 1,
     };
 
     if (checkPerson) {
@@ -60,20 +69,15 @@ const App = () => {
                 person.id !== checkPerson.id ? person : result
               )
             );
-            setAddPerson({ name: "", number: "", id: "" });
-            setMessage({
-              msg: `Changed "${result.name}'s" number to "${result.number}"`,
-              status: "ok",
-            });
-            setTimeout(() => {
-              setMessage({ msg: "", status: "" });
-            }, 5000);
+            notify(
+              `Changed "${result.name}'s" number to "${result.number}"`,
+              "ok"
+            );
           })
           .catch((err) => {
-            setMessage({
-              ...message,
-              msg: `Information of "${checkPerson.name}" has already been removed from server`,
-            });
+            notify(
+              `Information of "${checkPerson.name}" has already been removed from server`
+            );
             setPersons(persons.filter((p) => p.id !== checkPerson.id));
             console.log("Error in update person >>>>", err);
           });
@@ -83,15 +87,11 @@ const App = () => {
         .create(newPerson)
         .then((result) => {
           setPersons(persons.concat(result));
-          setAddPerson({ name: "", number: "", id: "" });
-          setMessage({ msg: `Added "${result.name}"`, status: "ok" });
-          setTimeout(() => {
-            setMessage({ msg: "", status: "" });
-          }, 5000);
-          // console.log(result);
+          notify(`Added "${result.name}"`, "ok");
         })
         .catch((err) => console.log("Error in create >>>", err));
     }
+    setAddPerson({ name: "", number: "" });
   };
 
   // Fetching initial state from json-server
@@ -111,23 +111,11 @@ const App = () => {
         ._delete(id)
         .then(() => {
           setPersons(persons.filter((p) => p.id !== id));
-          setMessage({
-            msg: `"${person.name}" successfully deleted!`,
-            status: "ok",
-          });
-          setTimeout(() => {
-            setMessage({ msg: "", status: "" });
-          }, 5000);
+          notify(`"${person.name}" successfully deleted!`, "ok");
         })
         .catch((err) => {
-          setMessage({
-            msg: `"${person.name}" was previously deleted from the server!`,
-            status: "",
-          });
+          notify(`"${person.name}" was previously deleted from the server!`);
           setPersons(persons.filter((p) => p.id !== id));
-          setTimeout(() => {
-            setMessage({ msg: "", status: "" });
-          }, 5000);
           console.log("Error in delete >>>>", err);
         });
     }
